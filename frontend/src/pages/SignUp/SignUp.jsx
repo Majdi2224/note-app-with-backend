@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
-import Navbar from '../../components/Navbar/Navbar'
+import React, { useState } from 'react';
+import Navbar from '../../components/Navbar/Navbar';
 import PasswordInput from '../../components/Input/PasswordInput';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { validateEmail } from '../../utils/helper';
+import axiosInstance from '../../utils/axiosinstance';
 
 const SignUp = () => {
     const [email, setEmail] = useState('');
@@ -10,19 +11,14 @@ const SignUp = () => {
     const [name, setName] = useState('');
     const [error, setError] = useState(null);
 
+    // Initialize the useNavigate hook
+    const navigate = useNavigate();
 
-const navigate = useState
+    // Define the handleSignUp function as async
+    const handleSignUp = async (e) => {
+        e.preventDefault();
 
-
-
-
-
-
-
-
-    const handleSignUp = (e) => {
-        e.preventDefault()
-
+        // Validation checks
         if (!name) {
             setError('Please enter your name');
             return;
@@ -35,35 +31,37 @@ const navigate = useState
             setError('Please enter your password');
             return;
         }
-        setError('');
-        // signup Api call
+        setError(''); // Reset error state
+
         try {
+            // API call to sign up
             const response = await axiosInstance.post("/create-account", {
                 fullName: name,
                 email: email,
                 password: password,
             });
 
-            //handle success registration  response
+            // Handle success response
             if (response.data && response.data.error) {
-                setError(response.data.message)
-                return
-
+                setError(response.data.message);
+                return;
             }
-            if(response.data && response.data.accessToken){
-                localStorage.setItem("token",response.data.accessToken)
-                Navigate('/dashboard')
+            
+            // Store token in localStorage and navigate to dashboard
+            if (response.data && response.data.accessToken) {
+                localStorage.setItem("token", response.data.accessToken);
+                navigate('/dashboard');
             }
-        }
-        catch (error) {
-            //handle error
-            if (error.response && error.response.date && error.response.data.messsage) {
-                setError(error.response.data.message)
+        } catch (error) {
+            // Handle error in API call
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
             } else {
-                setError("Something went wrong. Please try again.")
+                setError("Something went wrong. Please try again.");
             }
         }
     };
+
     return (
         <>
             <Navbar />
@@ -71,11 +69,17 @@ const navigate = useState
                 <div className='w-96 border rounded bg-white px-7 py-10'>
                     <form onSubmit={handleSignUp}>
                         <h4 className='text-2xl mb-7'>SignUp</h4>
-                        <input type="text" placeholder='Name' className='input-box'
+                        <input
+                            type="text"
+                            placeholder='Name'
+                            className='input-box'
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
-                        <input type="text" placeholder='Email' className='input-box'
+                        <input
+                            type="text"
+                            placeholder='Email'
+                            className='input-box'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -87,14 +91,14 @@ const navigate = useState
                         </button>
 
                         <p className='text-sm text-center mt-4'>
-                            Already have an account ?{""}
-                            <Link to="/login" className='font-medium text-primary underline'> Login</Link>
+                            Already have an account?{" "}
+                            <Link to="/login" className='font-medium text-primary underline'>Login</Link>
                         </p>
                     </form>
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default SignUp
+export default SignUp;
