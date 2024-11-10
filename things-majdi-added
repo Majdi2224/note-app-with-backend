@@ -1,0 +1,10 @@
+/* install axios then run dev ,
+
+  in home check the comment i addd those comments 
+    const[userInfo,setuserInfo] = useState(null);
+    const navigate = useNavigate();,
+    add userInfo to function navbar({userInfo})
+    and add it to the navbar in return in home.jsx
+    and inside the navbar.jsx inside the profileInfo
+    and inside the component profileInfo,
+in profileInfo component i cahnged karim zeinedden in 2 places check them,
